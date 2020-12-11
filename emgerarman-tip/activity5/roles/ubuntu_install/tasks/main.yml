@@ -1,0 +1,14 @@
+---
+- name: Install boto, ansible and openstack via pip
+  pip:
+    name:
+      - boto
+      - ansible
+      - python-openstackclient
+
+- name: Install Java for Ubuntu
+  apt:
+    name: default-jre
+    state: latest
+
+# tasks file for roles/ubuntu_install
