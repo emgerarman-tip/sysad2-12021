@@ -1,0 +1,39 @@
+---
+- name: Install LAMP Stack on Ubuntu Server
+  hosts: all
+  tasks:
+    - name: Install Apache2, MySQL server, PHP and PHP-mySQL
+      become: yes
+      apt:
+        pkg:
+          - apache2
+          - mysql-server
+          - php
+          - php-mysql
+        state: present
+        update_cache: yes
+
+    - name: Start Apache Service
+      become: yes
+      become_user: root
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Start MySQL Service
+      become: yes
+      become_user: root
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Create Target Directory
+      file: path=/var/www/html state=directory mode=0755
+
+    - name: index.html file
+      become: yes
+      copy:
+        src: /tmp/index.html
+        dest: /var/www/html/index.html
