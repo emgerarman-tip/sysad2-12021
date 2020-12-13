@@ -1,18 +1,10 @@
 ---
-- name: Apache Install
+- name: Installation of LAMP on Ubuntu
   hosts: all
-
   roles:
-   - ubuntu_lamp
+    - install_lamp
 
-- name: MySQL Packages Install
+- name: Deploy and Run LAMP
   hosts: all
-
   roles:
-   - ubuntu_lamp
-
-- name: PHP Package Install
-  hosts: all
-
-  roles:
-  - ubuntu_lamp
+    - ubuntu_lamp
