@@ -1,0 +1,7 @@
+---
+- name: Install Java open-jdk
+  apt:
+    name: default-jre
+    state: latest
+
+# tasks file for roles/java

@@ -1,0 +1,17 @@
+---
+- name: Hands-on Prelim Examination
+  hosts: ubuntu
+
+  tasks:
+    - name: Run config.yaml
+      include_vars:
+        file: config.yaml 
+
+- name: Roles
+  hosts: ubuntu
+
+  roles:
+    - python
+    - java
+    - change_motd
+    - create_user

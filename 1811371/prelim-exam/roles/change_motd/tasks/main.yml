@@ -1,0 +1,5 @@
+---
+- name:
+  command: sh -c 'echo "Hello, good day! - {{ username }} " > /etc/motd'
+
+# tasks file for roles/change_motd
