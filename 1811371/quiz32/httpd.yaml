@@ -21,16 +21,16 @@
 
       notify:
       - start apache
-      - setup firewalld
-      - reload firewalld
+      - Setup ufw
+      - Reload ufw
 
   handlers:
     - name: start apache
       service: name=apache2 state=started
-    - name: Setup firewalld
-      firewalld:
-        service: http
-        permanent: true
+    - name: Setup ufw
+      ufw:
+        name: apache
+        rule: allow
         state: enabled
-    - name: reload firewalld
-      service: name=firewalld state=restarted
+    - name: Reload ufw
+      service: name=ufw state=restarted
