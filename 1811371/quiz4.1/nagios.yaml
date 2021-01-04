@@ -1,0 +1,7 @@
+---
+- name: Install Nagios Core on Ubuntu
+  hosts: ubuntu
+  roles:
+    - configuration
+    - nagios
+    - nagioscore
