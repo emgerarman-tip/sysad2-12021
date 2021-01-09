@@ -1,0 +1,57 @@
+---
+# tasks file for roles/elastic_ubuntu
+- name: Install Docker  File
+  apt:
+    name: docker.io
+    state: latest
+    update_cache: yes
+  register: docker
+
+- name: Install docker.py
+  pip:
+    name: docker.py
+    state: latest
+  when: docker.changed
+
+- name: Pull Elasticsearch Image
+  docker_image:
+    name: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+
+- name: Create Docker Network
+  docker_network:
+    name: elastic
+
+- name: Create Elasticsearch Container
+  docker_container:
+    name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    state: present
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - name: elastic
+
+- name: Create Container for Kibana
+  docker_container:
+    name: Kibana
+    image: docker.elastic.co/kibana/kibana:7.10.1
+    state: present
+    ports:
+      - "5601:5601"
+    networks:
+      - name: elastic
+
+- name: Pull logstash Image
+  docker_image:
+    name: docker.elastic.co/kibana/kibana:7.10.1
+
+- name: Create Container for logstash
+  docker_container:
+    name: logstash
+    image: docker.elastic.co/logstash/logstash:7.10.1
+    state: present
+    ports:
+      - "5044:5044"
+    networks:
+      - name: elastic
