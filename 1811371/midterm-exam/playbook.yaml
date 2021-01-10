@@ -1,0 +1,25 @@
+---
+- name: Midterm Exam
+  hosts: centos
+
+  tasks:
+    - name: Include the config.yaml
+      include_vars:
+        file: config.yaml
+
+- name: Install ELK, Nagios, GPI and LAMP on Ubuntu
+  hosts: ubuntu
+
+  roles:
+    - ubuntu_elk
+    - ubuntu_nagios
+    - ubuntu_gpi
+    - ubuntu_lamp
+
+- name: Install ELK, GPI and LAMP on Centos
+  hosts: centos
+
+  roles:
+    - centos_elk
+    - centos_gpi
+    - centos_lamp

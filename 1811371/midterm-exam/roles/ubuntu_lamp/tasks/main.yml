@@ -1,0 +1,39 @@
+---
+# tasks file for roles/ubuntu_lamp
+- name: Install Apache Web Server
+  apt:
+    name: apache2
+    state: present
+
+- name: Start Services
+  service:
+    name: apache2
+    state: started
+
+- name: Allow Access to TCP Port 80
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+
+- name: Enable Firewall
+  ufw:
+    state: enabled
+
+- name: Install mysql
+  apt:
+    name: mysql-server
+    state: present
+
+- name: PIP Install
+  apt:
+    name:
+      - php
+      - libapache2-mod-php
+      - php-mysql
+    state: present
+
+- name: Installing Pre-requisites
+  apt:
+    name: mariadb-server-10.3
+    state: present

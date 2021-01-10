@@ -1,0 +1,110 @@
+---
+# tasks file for roles/ubuntu_elk
+- name: Adding gpg key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+
+- name: Adding the source
+  copy:
+    content: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
+    dest: /etc/apt/sources.list.d/elastic-7.x.list
+
+- name: Ubuntu Update
+  become: yes
+  apt:
+    upgrade: 'yes'
+    update_cache: yes
+
+- name: Install elasticsearch
+  apt:
+    name: elasticsearch
+    state: present
+
+- name: Update host in elasticsearch.yml
+  lineinfile:
+    destfile: /etc/elasticsearch/elasticsearch.yml
+    regexp: 'network.host'
+    line: 'network.host: localhost'
+
+- name: Update port in elasticsearch
+  lineinfile:
+    destfile: /etc/elasticsearch/elasticsearch.yml
+    regexp: 'http.port'
+    line: 'http.port: 9200'
+
+- name: Start elasticsearch service
+  service:
+    name: elasticsearch
+    state: started
+    enabled: yes
+
+- name: Kibana Install
+  apt:
+    name: kibana
+    state: present
+
+- name: Update host in Kibana
+  replace:
+    path: /etc/kibana/kibana.yml
+    regexp: '#server.host:'
+    replace: 'server.host: 127.0.0.1'
+  register: kibana_host
+
+- name: Update Port in Kibana
+  replace:
+    path: /etc/kibana/kibana.yml
+    regexp: '#server.port: 5601'
+    replace: 'server.port: 5601'
+  register: kibana_port
+
+- name: Update elasticsearch url
+  replace:
+    path: /etc/kibana/kibana.yml
+    regexp: 'elasticsearch.url:'
+    replace: 'elasticsearch.url: ["http://localhost:9200"]'
+  register: kibana_url
+
+- name: Starting Kibana Service
+  service:
+    name: kibana
+    state: started
+    enabled: yes
+
+- name: Installing logstash
+  apt:
+    name: logstash
+    state: present
+
+- name: copy 02-beats-input.conf
+  copy:
+    src: ~/emgerarman-tip/sysad2-12021/1811371/midterm-exam/02-beats-input.conf
+    dest: /etc/logstash/conf.d
+
+- name: copy 10-syslog-filter.conf
+  copy:
+    src: ~/emgerarman-tip/sysad2-12021/1811371/midterm-exam/10-syslog-filter.conf
+    dest: /etc/logstash/conf.d
+
+- name: copy 30-elasticsearch-output.conf
+  copy:
+    src: ~/emgerarman-tip/sysad2-12021/1811371/midterm-exam/30-elasticsearch-output.conf
+    dest: /etc/logstash/conf.d
+
+- name: Filebeat Install
+  apt:
+    name: filebeat
+    state: present
+
+- name: filebeat Config File
+  copy:
+    src: ~/emgerarman-tip/sysad2-12021/1811371/midterm-exam/filebeat.yml
+    dest: /etc/filebeat
+
+- name: Enable filebeat Module
+  become: yes
+  command: filebeat modules enable system nginx mysql
+
+- name: Load the Template
+  become: yes
+  command: filebeat setup --index-management -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["localhost:9200"]'

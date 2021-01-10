@@ -1,0 +1,11 @@
+output.logstash:
+  hosts: ["localhost:504"]
+
+filebeat.modules:
+  - module: nginx
+  - module: mysql
+  - module: system
+
+filebeat.config.modules:
+  enabled: true
+  path: ${path.config}/modules.d/*.yml
